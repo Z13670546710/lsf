@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>洛神赋-词影相依</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+        <nav class="tab-bar">
+                <a href="./index.html">词语通解</a>
+                <a href="./index2.html" class="active">词影相依</a>
+                <a href="./index3.html">飞花练功</a>
+                <a href="./index4.html">通关测试</a>
+            </nav>
+    <div class="game-container">
+        <h1>词影相依</h1>
+        <div class="game-instruction">
+            请将左侧的词语与右侧的解释正确连线
+        </div>
+        <div class="matching-area">
+            <div class="items-container">
+                <div class="terms-container" id="termsContainer"></div>
+                <div class="definitions-container" id="definitionsContainer"></div>
+            </div>
+            <div class="lines-container" id="linesContainer"></div>
+            <div class="feedback" id="feedback"></div>
+        </div>
+    </div>
+
+    <script>
+        // 词语和解释数据
+        const matchingData = [
+            {
+                term: "靥辅承权",
+                definition: "面颧下的两个甜甜的酒窝，形容女性的美丽和妩媚"
+            },
+            {
+                term: "明眸善睐",
+                definition: "形容女子的眼睛明亮而灵活"
+            },
+            {
+                term: "丹唇外朗",
+                definition: "形容女性的嘴唇红润而有光泽,给人清新、健康的感觉"
+            },
+            {
+                term: "云髻峨峨",
+                definition: "发髻高耸如云"
+            },
+            {
+                term: "披罗衣之璀粲兮",
+                definition: "身着光彩夺目的罗衣"
+            },
+            {
+                term: "珥瑶碧之华琚",
+                definition: "佩戴着珍贵的美玉耳环和华丽的玉佩"
+            },
+            {
+                term: "践远游之文履",
+                definition: "脚著饰有花纹的远游鞋"
+            },
+            {
+                term: "步踟蹰于山隅",
+                definition: "在山边徘徊倘佯"
+            }
+        ];
+
+        // 游戏状态
+        let selectedTerm = null;
+        let selectedDefinition = null;
+        let matchedPairs = [];
+        let lines = [];
+
+        // 初始化游戏
+        function initGame() {
+            const termsContainer = document.getElementById('termsContainer');
+            const definitionsContainer = document.getElementById('definitionsContainer');
+            
+            // 清空容器
+            termsContainer.innerHTML = '';
+            definitionsContainer.innerHTML = '';
+            
+            // 随机排序词语和解释
+            const shuffledTerms = [...matchingData].sort(() => Math.random() - 0.5);
+            const shuffledDefinitions = [...matchingData].sort(() => Math.random() - 0.5);
+            
+            // 创建词语元素
+            shuffledTerms.forEach((item, index) => {
+                const termElement = document.createElement('div');
+                termElement.className = 'term';
+                termElement.textContent = item.term;
+                termElement.dataset.index = index;
+                termElement.dataset.term = item.term;
+                termElement.onclick = () => selectTerm(termElement);
+                termsContainer.appendChild(termElement);
+            });
+            
+            // 创建解释元素
+            shuffledDefinitions.forEach((item, index) => {
+                const definitionElement = document.createElement('div');
+                definitionElement.className = 'definition';
+                definitionElement.textContent = item.definition;
+                definitionElement.dataset.index = index;
+                definitionElement.dataset.definition = item.definition;
+                definitionElement.onclick = () => selectDefinition(definitionElement);
+                definitionsContainer.appendChild(definitionElement);
+            });
+            
+            // 重置游戏状态
+            selectedTerm = null;
+            selectedDefinition = null;
+            matchedPairs = [];
+            lines = [];
+            document.getElementById('feedback').textContent = '';
+        }
+        
+        // 选择词语
+        function selectTerm(element) {
+            // 如果已经匹配成功，不能再选
+            if (element.classList.contains('correct')) return;
+            
+            // 取消之前的选择
+            document.querySelectorAll('.term.selected').forEach(el => el.classList.remove('selected'));
+            
+            // 选择当前项
+            element.classList.add('selected');
+            selectedTerm = element;
+            
+            // 如果有选中的解释，尝试匹配
+            if (selectedDefinition) {
+                checkMatch();
+            }
+        }
+        
+        // 选择解释
+        function selectDefinition(element) {
+            // 如果已经匹配成功，不能再选
+            if (element.classList.contains('correct')) return;
+            
+            // 取消之前的选择
+            document.querySelectorAll('.definition.selected').forEach(el => el.classList.remove('selected'));
+            
+            // 选择当前项
+            element.classList.add('selected');
+            selectedDefinition = element;
+            
+            // 如果有选中的词语，尝试匹配
+            if (selectedTerm) {
+                checkMatch();
+            }
+        }
+        
+        // 检查匹配
+        function checkMatch() {
+            if (!selectedTerm || !selectedDefinition) return;
+            
+            const term = selectedTerm.dataset.term;
+            const definition = selectedDefinition.dataset.definition;
+            
+            // 检查是否正确匹配
+            const isCorrect = matchingData.some(item => 
+                item.term === term && item.definition === definition
+            );
+            
+            if (isCorrect) {
+                // 正确匹配
+                selectedTerm.classList.add('correct');
+                selectedDefinition.classList.add('correct');
+                selectedTerm.classList.remove('selected');
+                selectedDefinition.classList.remove('selected');
+                
+                // 绘制连线
+                drawLine(selectedTerm, selectedDefinition, true);
+                
+                // 添加到已匹配列表
+                matchedPairs.push({ term: selectedTerm, definition: selectedDefinition });
+                
+                // 清空选择
+                selectedTerm = null;
+                selectedDefinition = null;
+                
+                // 检查是否完成
+                if (matchedPairs.length === matchingData.length) {
+                    document.getElementById('feedback').textContent = '恭喜你！全部匹配正确！';
+                } else {
+                    document.getElementById('feedback').textContent = '匹配正确！';
+                }
+            } else {
+                // 错误匹配
+                document.getElementById('feedback').textContent = '匹配错误，请重新选择';
+                
+                // 绘制红色连线（短暂显示）
+                drawLine(selectedTerm, selectedDefinition, false);
+                
+                // 重置选择
+                setTimeout(() => {
+                    selectedTerm.classList.remove('selected');
+                    selectedDefinition.classList.remove('selected');
+                    selectedTerm = null;
+                    selectedDefinition = null;
+                    
+                    // 移除错误的连线
+                    if (lines.length > 0) {
+                        const lastLine = lines[lines.length - 1];
+                        lastLine.remove();
+                        lines.pop();
+                    }
+                }, 500);
+            }
+        }
+        
+        // 绘制连线
+        function drawLine(termElement, definitionElement, isCorrect) {
+            const linesContainer = document.getElementById('linesContainer');
+            
+            // 获取元素位置
+            const termRect = termElement.getBoundingClientRect();
+            const definitionRect = definitionElement.getBoundingClientRect();
+            const containerRect = linesContainer.getBoundingClientRect();
+            
+            // 计算起点和终点坐标（相对于linesContainer）
+            const startX = termRect.right - containerRect.left;
+            const startY = termRect.top + termRect.height / 2 - containerRect.top;
+            const endX = definitionRect.left - containerRect.left;
+            const endY = definitionRect.top + definitionRect.height / 2 - containerRect.top;
+            
+            // 计算线段长度和角度
+            const length = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
+            const angle = Math.atan2(endY - startY, endX - startX) * 180 / Math.PI;
+            
+            // 创建线段
+            const line = document.createElement('div');
+            line.className = 'line';
+            line.style.width = `${length}px`;
+            line.style.left = `${startX}px`;
+            line.style.top = `${startY}px`;
+            line.style.transform = `rotate(${angle}deg)`;
+            line.style.backgroundColor = isCorrect ? '#4caf50' : '#f44336';
+            
+            linesContainer.appendChild(line);
+            lines.push(line);
+            
+            // 如果不是正确匹配，0.5秒后移除
+            if (!isCorrect) {
+                setTimeout(() => {
+                    line.remove();
+                    // lines = lines.filter(l => l !== line);
+                }, 500);
+            }
+        }
+        
+        // 初始化游戏
+        window.onload = initGame;
+    </script>
+</body>
+</html>

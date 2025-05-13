@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>洛神赋-通关测试</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+        <nav class="tab-bar">
+                <a href="./index.html">词语通解</a>
+                <a href="./index2.html">词影相依</a>
+                <a href="./index3.html">飞花练功</a>
+                <a href="./index4.html" class="active">通关测试</a>
+            </nav>
+    <div class="game-container">
+        <h1>通关测试</h1>
+        <div id="questionsContainer"></div>
+        <button id="submitBtn" onclick="checkAnswers()">提交答案</button>
+        <div id="result"></div>
+    </div>
+
+<script>
+// 题目数据
+const questions = [
+    {
+        type: "single",
+        title: "下列词语注音正确的一项是：",
+        options: [
+            { label: "A", text: "秾（nóng）纤（xiān）得衷" },
+            { label: "B", text: "铅（qiān）华弗御" },
+            { label: "C", text: "罗衣之璀粲（cǎn）" },
+            { label: "D", text: "明眸善睐（lì）" }
+        ],
+        answer: "A"
+    },
+    {
+        type: "single",
+        title: "“靥辅承权”中“靥”的正确读音是：",
+        options: [
+            { label: "A", text: "yè" },
+            { label: "B", text: "yān" },
+            { label: "C", text: "yèng" },
+            { label: "D", text: "yàn" }
+        ],
+        answer: "A"
+    },
+    {
+        type: "single",
+        title: "“芳泽无加，铅华弗御”中“芳泽”指：",
+        options: [
+            { label: "A", text: "口红" },
+            { label: "B", text: "香膏" },
+            { label: "C", text: "头油" },
+            { label: "D", text: "香水" }
+        ],
+        answer: "B"
+    },
+    {
+        type: "single",
+        title: "“肩若削成，腰如约素”中“约素”含义是：",
+        options: [
+            { label: "A", text: "裹着素色布" },
+            { label: "B", text: "比喻白纸一样的腰" },
+            { label: "C", text: "素静的姿态" },
+            { label: "D", text: "如素绢一般纤细柔和" }
+        ],
+        answer: "D"
+    },
+    {
+        type: "single",
+        title: "“明眸善睐，靥辅承权”描绘的是洛神哪一方面的美？",
+        options: [
+            { label: "A", text: "肤色" },
+            { label: "B", text: "发饰" },
+            { label: "C", text: "眼神与神态" },
+            { label: "D", text: "步态" }
+        ],
+        answer: "C"
+    },
+    {
+        type: "sort",
+        title: "请按描写顺序排列下列句子：（答案格式示例：A,B,C,D）",
+        options: [
+            { label: "A", text: "曳雾绡之轻裾" },
+            { label: "B", text: "云髻峨峨，修眉联娟" },
+            { label: "C", text: "丹唇外朗，皓齿内鲜" },
+            { label: "D", text: "肩若削成，腰如约素" }
+        ],
+        answer: "D,B,C,A"
+    },
+    {
+        type: "sort",
+        title: "请按“由外到内”的描写逻辑顺序排列下列描写点：（答案格式示例：A,B,C,D）",
+        options: [
+            { label: "A", text: "面容" },
+            { label: "B", text: "身姿比例" },
+            { label: "C", text: "气质神态" },
+            { label: "D", text: "服饰装饰"}
+        ],
+        answer: "B,A,C,D"
+    },
+    {
+        type: "single",
+        title: "“《洛神赋》中“肩若削成，腰如约素”主要运用了哪种修辞？",
+        options: [
+            { label: "A", text: " 拟人" },
+            { label: "B", text: "比喻" },
+            { label: "C", text: "夸张" },
+            { label: "D", text: "排比" }
+        ],
+        answer: "B"
+    },
+    {
+        type: "single",
+        title: "“奇服旷世，骨像应图”一句中的“骨像应图”意指：",
+        options: [
+            { label: "A", text: " 形容其骨骼异常" },
+            { label: "B", text: "她的装饰像画像一样美" },
+            { label: "C", text: "其体态如画中人，合乎仙图" },
+            { label: "D", text: "穿戴奇异，无法描绘" }
+        ],
+        answer: "C"
+    },
+    {
+        type: "single",
+        title: "“愿诚素之先达兮，解玉佩以要之”的下一句是：",
+        options: [
+            { label: "A", text: " 感交甫之弃言兮，怅犹豫而狐疑" },
+            { label: "B", text: "感交甫之弃言兮，怅犹豫而狐疑" },
+            { label: "C", text: "余情悦其淑美兮，心振荡而不怡" },
+            { label: "D", text: "抗琼珶以和予兮，指潜渊而为期" }
+        ],
+        answer: "B"
+    },
+];
+
+// 随机打乱题目顺序
+questions.sort(() => Math.random() - 0.5);
+
+// 渲染题目
+function renderQuestions() {
+    const container = document.getElementById('questionsContainer');
+    
+    questions.forEach((q, index) => {
+        const questionDiv = document.createElement('div');
+        questionDiv.className = 'question';
+        questionDiv.dataset.index = index;
+        questionDiv.innerHTML = `
+            <div class="question-title">${index + 1}. ${q.title}</div>
+            ${q.type === 'single' ? renderOptions(q, index) : renderSortInput(q, index)}
+        `;
+        container.appendChild(questionDiv);
+    });
+}
+
+// 渲染单选题
+function renderOptions(q, index) {
+    return `
+        <div class="options-container">
+            ${q.options.map(opt => `
+                <label class="option-label">
+                    <input type="radio" name="q${index}" value="${opt.label}">
+                    <span>${opt.label}. ${opt.text}</span>
+                </label>
+            `).join('')}
+        </div>
+    `;
+}
+
+// 渲染排序题
+function renderSortInput(q, index) {
+    // 添加选项提示
+    const optionsHint = q.options.map(opt => 
+        `<div style="margin: 5px 0; font-size: 18px;">${opt.label}. ${opt.text}</div>`
+    ).join('');
+    
+    return `
+        <div style="margin-bottom: 15px;">${optionsHint}</div>
+        <input type="text" class="sort-input" 
+               placeholder="请输入选项字母（如：${q.options.map(o => o.label).join(',')}）"
+               data-index="${index}">
+    `;
+}
+
+// 检查答案
+function checkAnswers() {
+    let correctCount = 0;
+    
+    questions.forEach((q, index) => {
+        const userAnswer = getUserAnswer(q.type, index);
+        const isCorrect = normalizeAnswer(userAnswer) === normalizeAnswer(q.answer);
+        
+        if(isCorrect) correctCount++;
+        markQuestion(index, isCorrect);
+    });
+
+    showResult(correctCount);
+}
+
+// 获取用户答案
+function getUserAnswer(type, index) {
+    if(type === 'single') {
+        const selected = document.querySelector(`input[name="q${index}"]:checked`);
+        return selected ? selected.value : '';
+    }
+    if(type === 'sort') {
+        const input = document.querySelector(`.sort-input[data-index="${index}"]`);
+        return input ? input.value.toUpperCase() : '';
+    }
+}
+
+// 答案格式化
+function normalizeAnswer(ans) {
+    return ans.replace(/[^A-Z,]/g, '').replace(/,+/g, ',').toUpperCase();
+}
+
+// 标记题目状态
+function markQuestion(index, isCorrect) {
+    const questionDiv = document.querySelector(`.question[data-index="${index}"]`);
+    questionDiv.classList.remove('correct', 'incorrect');
+    questionDiv.classList.add(isCorrect ? 'correct' : 'incorrect');
+}
+
+// 显示最终结果
+function showResult(correctCount) {
+    const resultDiv = document.getElementById('result');
+    const percentage = (correctCount / questions.length * 100).toFixed(1);
+    resultDiv.innerHTML = `
+        <div style="color: ${correctCount === questions.length ? '#4CAF50' : '#f44336'};">
+            ${correctCount === questions.length ? '恭喜满分！' : '继续加油！'}
+        </div>
+        <div>正确题数：${correctCount}/${questions.length}</div>
+        <div>正确率：${percentage}%</div>
+    `;
+}
+
+// 初始化渲染
+renderQuestions();
+</script>
+</body>
+</html>

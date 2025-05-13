@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>洛神赋</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+        <nav class="tab-bar">
+            <a href="./index.html" class="active">词语通解</a>
+            <a href="./index2.html">词影相依</a>
+            <a href="./index3.html">飞花练功</a>
+            <a href="./index4.html">通关测试</a>
+        </nav>
+        
+    <div class="game-container" style="background: transparent;box-shadow: none;">
+            <h1>词语通解</h1>
+    <div class="card-container">
+            <!-- 当前显示的卡片 -->
+            <div class="card" id="currentCard">
+                <div class="card-inner">
+                    <div class="card-front">秾纤得衷<div class="pinyin">nóng xiān dé zhōng</div></div>
+                    <div class="card-back">
+                        <div class="img-container">
+                            <img src="./images/i1.png" class="explanation-img">
+                        </div>
+                        <div class="text-container">
+                            “秾”指丰腴，“纤”指纤细，“得衷”即匀称，表现身材比例的和谐美
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="nav-buttons">
+            <button onclick="prevCard()">上一张</button>
+            <button onclick="nextCard()">下一张</button>
+        </div>
+    </div>
+
+<script>
+// 卡片数据
+const cardData = [
+    {
+        word: "秾纤得衷",
+        pinyin: "nóng xiān dé zhōng",
+        img: "./images/i1.png",
+        explanation: "“秾”指丰腴，“纤”指纤细，“得衷”即匀称，表现身材比例的和谐美"
+    },
+    {
+        word: "修短合度",
+        pinyin: "xiū duǎn hé dù",
+        img: "./images/i2.png",
+        explanation: "形容身材比例的和谐，指身形高矮、长短适中，均衡而美"
+    },
+    {
+        word: "肩若削成",
+        pinyin: "jiān ruò xuē chéng",
+        img: "./images/i3.png",
+        explanation: "削成”形容肩部线条像刀削般清晰、挺拔，强调形体的精致感。配图：画面中一位肩膀线条流畅、优美的女性。"
+    },
+    {
+        word: "腰如约素",
+        pinyin: "yāo rú yuē sù",
+        img: "./images/i4.png",
+        explanation:"约素”指细白如素绢，形容腰肢纤细柔美，突出洛神的清秀与柔美。配图：细腰的仕女，腰部线条柔美。"
+    },
+    {
+        word: "延颈秀项",
+        pinyin: "yán jǐng xiù xiàng",
+        img: "./images/i5.png",
+        explanation:"“延”指伸长，强调洛神的脖颈修长美丽，突出了她的气质与外形的高贵。配图：优雅修长的脖颈，展示出神仙般的高贵气质。"
+    },
+    {
+        word: "皓质呈露",
+        pinyin: "hào zhì chéng lù",
+        img: "./images/i6.png",
+        explanation:"“皓”指洁白，“质”指肌肤，这里表现了洛神的洁白无瑕的肌肤，天生丽质。配图：肌肤光滑、白皙的女性特写，展现出她的纯净与美丽。"
+    },
+    {
+        word: "芳泽无加",
+        pinyin: "fāng zé wú jiā",
+        img: "./images/i7.png",
+        explanation: "“芳泽”指香气、芳华，这里表示洛神天生丽质，无需任何修饰。"
+    },
+    {
+        word: "铅华弗御",
+        pinyin: "qiān huá fú yù",
+        img: "./images/i8.png",
+        explanation: "“铅华”指化妆品，这里表达洛神的美丽无需任何化妆，纯粹自然。"
+    },
+    {
+        word: "云髻峨峨",
+        pinyin: "yún jì é é",
+        img: "./images/i9.png",
+        explanation: "“云髻”是高耸的发髻，形容洛神的发型高贵且别致，带有神仙的气质。"
+    },
+    {
+        word: "修眉联娟",
+        pinyin: "xiū méi lián juān",
+        img: "./images/i10.png",
+        explanation: "“修眉”指眉毛修饰得柔美，“联娟”是细长、柔美的样子，表现洛神眉目如画。"
+    },
+    {
+        word: "丹唇外朗",
+        pinyin: "dān chún wài lǎng",
+        img: "./images/i11.png",
+        explanation: "“丹唇”指红润的唇色，“外朗”表示外观鲜明，突出了洛神的面容美丽。"
+    },
+    {
+        word: "皓齿内鲜",
+        pinyin: "hào chǐ nèi xiān",
+        img: "./images/i12.png",
+        explanation: "“皓齿”是洁白的牙齿，展现了洛神的美丽与无瑕的笑容。"
+    },
+    {
+        word: "明眸善睐",
+        pinyin: "míng móu shàn lài",
+        img: "./images/i13.png",
+        explanation: "“明眸”是明亮的眼睛，“善睐”指善于回眸，表达她眼神的灵动与含情脉脉。"
+    },
+    {
+        word: "靥辅承权",
+        pinyin: "yè fǔ chéng quán",
+        img: "./images/i14.png",
+        explanation: "“靥”是酒窝，“承权”是指两腮微隆，增加了她的动人魅力与神态的生动感。"
+    },
+    {
+        word: "瑰姿艳逸",
+        pinyin: "guī zī yàn yì",
+        img: "./images/i15.png",
+        explanation: "“瑰姿”指优美的姿态，“艳逸”指艳丽而又脱俗，突出了洛神的高贵与脱凡气质。"
+    },
+    {
+        word: "仪静体闲",
+        pinyin: "yí jìng tǐ xián",
+        img: "./images/i16.png",
+        explanation: "“仪静”指仪态端庄，“体闲”表示神态悠闲，洛神的气质柔美、从容。"
+    },
+    {
+        word: "柔情绰态",
+        pinyin: "róu qíng chuò tài",
+        img: "./images/i7.png",
+        explanation: "“柔情”是温柔的情感，“绰态”是柔美的姿态，突出洛神温柔、妩媚的气质。"
+    },
+    {
+        word: "媚于语言",
+        pinyin: "mèi yú yǔ yán",
+        img: "./images/i8.png",
+        explanation: "“媚于语言”表示她的语言充满了魅力、诱人，侧重内在气质的流露。"
+    },
+    {
+        word: "奇服旷世",
+        pinyin: "qí fú kuàng shì",
+        img: "./images/i9.png",
+        explanation: "“奇服”是指非凡、独特的服装，“旷世”形容无与伦比，强调洛神的服饰美丽、独特，彰显其超凡脱俗的气质。"
+    },
+    {
+        word: "骨像应图",
+        pinyin: "gǔ xiàng yìng tú",
+        img: "./images/i10.png",
+        explanation: "“骨像应图”表示她的身形和姿态仿佛是画中神仙，形象符合美的理想标准。"
+    },
+    {
+        word: "披罗衣之璀粲兮",
+        pinyin: "pī luó yī zhī cuǐ càn xī",
+        img: "./images/i1.png",
+        explanation: "“披罗衣”是穿上华丽的罗衣，“璀粲”指璀璨的光辉，形容洛神身着华丽衣服，令人目不暇接。"
+    },
+    {
+        word: "珥瑶碧之华琚",
+        pinyin: "ěr yáo bì zhī huá jū",
+        img: "./images/i2.png",
+        explanation: "“珥瑶碧”指耳饰华丽，瑶碧是美玉，形容洛神佩戴的珍贵珠宝。"
+    },
+    {
+        word: "戴金翠之首饰",
+        pinyin: "dài jīn cuì zhī shǒu shì",
+        img: "./images/i3.png",
+        explanation: "“金翠”指金饰与翠玉，形容洛神佩戴的华丽首饰。"
+    },
+    {
+        word: "缀明珠以耀躯",
+        pinyin: "zhuì míng zhū yǐ yào qū",
+        img: "./images/i4.png",
+        explanation: "“缀”是装饰，“明珠”是明亮的珍珠，形容洛神身上挂着璀璨的明珠，映衬她的美丽。"
+    },
+    {
+        word: "践远游之文履",
+        pinyin: "jiàn yuǎn yóu zhī wén lǚ",
+        img: "./images/i16.png",
+        explanation: "“践”是踏足，“远游之文履”是指她所穿的文人的鞋履，代表她的高雅与出尘。"
+    },
+    {
+        word: "曳雾绡之轻裾",
+        pinyin: "yì wù xiāo zhī qīng jū",
+        img: "./images/i5.png",
+        explanation: "“曳”是拖拽，“雾绡”是轻如雾气的绸布，形容洛神的裙摆轻盈飘动，犹如雾气缥缈。"
+    },
+    {
+        word: "微幽兰之芳蔼",
+        pinyin: "wēi yōu lán zhī fāng ǎi",
+        img: "./images/i7.png",
+        explanation: "“微幽兰”是淡淡的兰花香，“芳蔼”是芳香四溢，象征洛神的高洁与温柔。"
+    },
+    {
+        word: "步踟蹰于山隅",
+        pinyin: "bù chí chú yú shān yú",
+        img: "./images/i8.png",
+        explanation: "“踟蹰”是徘徊，形容洛神行走的轻盈与犹豫，带有神秘感，仿佛置身于山间仙境。"
+    },
+    {
+        word: "瑰姿艳逸",
+        pinyin: "guī zī yàn yì",
+        img: "./images/i9.png",
+        explanation: "“瑰姿”指美丽的姿态，“艳逸”是艳丽脱俗，描述洛神的姿态与气质非凡。"
+    },
+    {
+        word: "仪静体闲",
+        pinyin: "yí jìng tǐ xián",
+        img: "./images/i10.png",
+        explanation: "“仪静”表示仪态端庄，“体闲”指神态悠闲，从容，表现出洛神的优雅气质。"
+    }
+];
+
+let currentIndex = 0;
+const cardContainer = document.querySelector('.card-container');
+
+function updateCard() {
+    const currentData = cardData[currentIndex];
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+        <div class="card-inner">
+            <div class="card-front">${currentData.word}<div class="pinyin">${currentData.pinyin}</div></div>
+            <div class="card-back">
+                <div class="img-container">
+                    <img src="${currentData.img}" class="explanation-img">
+                </div>
+                <div class="text-container">${currentData.explanation}</div>
+            </div>
+        </div>
+    `;
+    card.addEventListener('click', () => card.classList.toggle('flipped'));
+    cardContainer.innerHTML = '';
+    cardContainer.appendChild(card);
+}
+
+function prevCard() {
+    currentIndex = (currentIndex - 1 + cardData.length) % cardData.length;
+    updateCard();
+}
+
+function nextCard() {
+    currentIndex = (currentIndex + 1) % cardData.length;
+    updateCard();
+}
+
+// 初始化第一个卡片
+updateCard();
+</script>
+</body>
+</html>

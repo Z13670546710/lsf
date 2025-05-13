@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>洛神赋-飞花练功</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+        <nav class="tab-bar">
+                <a href="./index.html">词语通解</a>
+                <a href="./index2.html">词影相依</a>
+                <a href="./index3.html" class="active">飞花练功</a>
+                <a href="./index4.html">通关测试</a>
+            </nav>
+    <div class="game-container">
+        <h1>飞花练功</h1>
+        <div class="game-instruction">
+            请填写正确的汉字完成诗句
+        </div>
+        <div id="questions-container"></div>
+        <div id="feedback"></div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                parts: ["奇", "", "旷", "世"],
+                answer: "服"
+            },
+            {
+                parts: ["云", "", "峨", "峨"],
+                answer: "髻"
+            },
+            {
+                parts: ["皓", "齿", "内", ""],
+                answer: "鲜"
+            },
+            {
+                parts: ["", "眉", "联", "娟"],
+                answer: "修"
+            },
+            {
+                parts: ["", "姿", "艳", "逸"],
+                answer: "瑰"
+            },
+            {
+                parts: ["秾", "", "得", "衷"],
+                answer: "纤"
+            },
+            {
+                parts: ["靥", "辅", "承", ""],
+                answer: "权"
+            },
+            {
+                parts: ["仪", "静", "", "闲"],
+                answer: "体"
+            },
+            {
+                parts: ["践", "远", "游", "之", "文", ""],
+                answer: "履"
+            },
+            {
+                parts: ["", "踟", "蹰", "于", "山", "隅"],
+                answer: "步"
+            }
+        ];
+
+        function initGame() {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = '';
+
+            // 随机排序题目
+            const shuffledQuestions = [...questions].sort(() => Math.random() - 0.5);
+
+            shuffledQuestions.forEach(q => {
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question';
+
+                q.parts.forEach((part, index) => {
+                    if (part === "") {
+                        const input = document.createElement('input');
+                        input.type = 'text';
+                        input.className = 'answer-input';
+                        input.dataset.correctAnswer = q.answer;
+                        input.addEventListener('input', checkAnswer);
+                        questionDiv.appendChild(input);
+                    } else {
+                        const span = document.createElement('span');
+                        span.textContent = part;
+                        questionDiv.appendChild(span);
+                    }
+                    
+                    // 添加空格分隔
+                    if (index !== q.parts.length - 1) {
+                        questionDiv.appendChild(document.createTextNode(' '));
+                    }
+                });
+
+                container.appendChild(questionDiv);
+            });
+        }
+
+        function checkAnswer(e) {
+            const input = e.target;
+            const correctAnswer = input.dataset.correctAnswer;
+            const userAnswer = input.value.trim();
+
+            if (userAnswer === correctAnswer) {
+                input.classList.add('correct');
+                input.classList.remove('incorrect');
+                input.readOnly = true;
+                checkAllAnswers();
+            } else {
+                input.classList.add('incorrect');
+                input.classList.remove('correct');
+            }
+        }
+
+        function checkAllAnswers() {
+            const inputs = document.querySelectorAll('.answer-input');
+            const correctInputs = document.querySelectorAll('.answer-input.correct');
+
+            if (inputs.length === correctInputs.length) {
+                document.getElementById('feedback').textContent = '恭喜！全部答案正确！';
+            }
+        }
+
+        // 初始化游戏
+        window.onload = initGame;
+    </script>
+</body>
+</html>
